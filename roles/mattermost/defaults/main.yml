@@ -1,0 +1,18 @@
+---
+
+mattermost_version: 4.7.2
+mattermost_url: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
+
+mattermost_user: mattermost
+mattermost_group: mattermost
+
+mattermost_DBHost: "{{ inventory_hostname }}"
+mattermost_DBPort: 5432
+mattermost_DBName: mattermost
+mattermost_DBUser: mattermost
+mattermost_DBPassword: "bkzuhbeASbpzedDJ"
+mattermost_DBDriver: postgres
+mattermost_DBDatasource: "{{ mattermost_DBDriver }}://{{ mattermost_DBUser }}:{{ mattermost_DBPassword }}@{{ mattermost_DBHost }}:{{ mattermost_DBPort }}/{{ mattermost_DBName }}?sslmode=disable&connect_timeout=10"
+
+mattermost_site_url: "http://mattermost.example.com:{{ mattermost_listen_port }}/"
+mattermost_listen_port: 8065

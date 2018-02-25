@@ -1,0 +1,32 @@
+---
+
+- name: Create Mattermost database on Postgresql
+  postgresql_db:
+    name: "{{ mattermost_DBName }}"
+    port: "{{ mattermost_DBPort }}"
+    state: present
+  become: yes
+  become_user: postgres
+  delegate_to: "{{ mattermost_DBHost }}"
+
+- name: Create Mattermost role on Postgresql
+  postgresql_user:
+    db: "{{ mattermost_DBName }}"
+    name: "{{ mattermost_DBUser }}"
+    password: "md5{{ (mattermost_DBPassword + mattermost_DBUser)|hash('md5') }}"
+    port: "{{ mattermost_DBPort }}"
+    priv: ALL
+    state: present
+    encrypted: yes
+  become: yes
+  become_user: postgres
+  delegate_to: "{{ mattermost_DBHost }}"
+
+- name: Configure Postgresql Rules
+  template:
+    src: "etc/postgresql/9.6/main/pg_hba.conf.j2"
+    dest: "/etc/postgresql/9.6/main/pg_hba.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart postgresql

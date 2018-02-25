@@ -1,0 +1,51 @@
+---
+
+- name: Manager Postgresql Database
+  import_tasks: postgresql.yml
+
+- name: Create Mattermost group
+  group:
+    name: "{{ mattermost_group }}"
+    state: present
+
+- name: Create Mattermost user
+  user:
+    name: "{{ mattermost_user }}"
+    shell: /bin/bash
+    groups: "{{ mattermost_group }}"
+    state: present
+
+- name: Download Mattermost packages
+  unarchive:
+    src: "{{ mattermost_url }}"
+    dest: /opt
+    remote_src: yes
+    owner: "{{ mattermost_user }}"
+    group: "{{ mattermost_group }}"
+
+- name: Create Mattermost directories
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ mattermost_user }}"
+    group: "{{ mattermost_group }}"
+    mode: 0755
+  with_items:
+    - /opt/mattermost/data
+
+- name: Configure Mattermost
+  template:
+    src: "opt/mattermost/config/config.json.j2"
+    dest: "/opt/mattermost/config/config.json"
+    owner: "{{ mattermost_user }}"
+    group: "{{ mattermost_group }}"
+    mode: 0644
+
+- name: Configure Mattermost systemd service
+  template:
+    src: "lib/systemd/system/mattermost.service.j2"
+    dest: "/lib/systemd/system/mattermost.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart mattermost
