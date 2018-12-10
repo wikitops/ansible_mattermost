@@ -1,21 +1,12 @@
 ---
 
-- name: Manager Postgresql Database
+- name: MATTERMOST | Manage Postgresql
   import_tasks: postgresql.yml
 
-- name: Create Mattermost group
-  group:
-    name: "{{ mattermost_group }}"
-    state: present
+- name: MATTERMOST | Manage user
+  import_tasks: user.yml
 
-- name: Create Mattermost user
-  user:
-    name: "{{ mattermost_user }}"
-    shell: /bin/bash
-    groups: "{{ mattermost_group }}"
-    state: present
-
-- name: Download Mattermost packages
+- name: MATTERMOST | Download packages
   unarchive:
     src: "{{ mattermost_url }}"
     dest: /opt
@@ -23,7 +14,7 @@
     owner: "{{ mattermost_user }}"
     group: "{{ mattermost_group }}"
 
-- name: Create Mattermost directories
+- name: MATTERMOST | Create directories
   file:
     state: directory
     path: "{{ item }}"
@@ -33,7 +24,7 @@
   with_items:
     - /opt/mattermost/data
 
-- name: Configure Mattermost
+- name: MATTERMOST | Configuration
   template:
     src: "opt/mattermost/config/config.json.j2"
     dest: "/opt/mattermost/config/config.json"
@@ -41,7 +32,7 @@
     group: "{{ mattermost_group }}"
     mode: 0644
 
-- name: Configure Mattermost systemd service
+- name: MATTERMOST | Configure systemd service
   template:
     src: "lib/systemd/system/mattermost.service.j2"
     dest: "/lib/systemd/system/mattermost.service"
@@ -49,3 +40,11 @@
     group: root
     mode: 0644
   notify: Restart mattermost
+
+- name: MATTERMOST | Manage logs
+  file:
+    src: /opt/mattermost/logs
+    dest: /var/log/mattermost
+    state: link
+    owner: root
+    group: root

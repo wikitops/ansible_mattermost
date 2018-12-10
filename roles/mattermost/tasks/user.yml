@@ -1,0 +1,13 @@
+---
+
+- name: MATTERMOST USER | Create group
+  group:
+    name: "{{ mattermost_group }}"
+    state: present
+
+- name: MATTERMOST USER | Create user
+  user:
+    name: "{{ mattermost_user }}"
+    shell: /bin/bash
+    groups: "{{ mattermost_group }}"
+    state: present
