@@ -1,3 +1,11 @@
+- src: git+https://github.com/wikitops/ansible_epel
+  version: "1.3"
+  name: epel
+
+- src: git+https://github.com/wikitops/ansible_pip
+  version: "1.4"
+  name: pip
+
 - src: git+https://github.com/wikitops/ansible_postgresql
   version: "1.0"
   name: postgresql

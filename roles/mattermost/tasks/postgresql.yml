@@ -22,8 +22,8 @@
 
 - name: MATTERMOST POSTGRESQL | Configure rules
   lineinfile:
-    path: "/etc/postgresql/9.6/main/pg_hba.conf"
+    path: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
     line: "host    all           all             {{ hostvars[item].ip }}/32           md5"
     state: present
   with_items: "{{ groups['mattermost'] }}"
-  notify: Restart postgresql
+  notify: restart postgresql
